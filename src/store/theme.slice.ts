@@ -1,17 +1,20 @@
 
 import { getItemAsBoolean, setItem } from "@/helper";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
+type InitialState = {
+    dark: boolean;
+}
 
-const name = 'theme';
-const initialState = {
+const initialState: InitialState = {
     dark: getItemAsBoolean('dark'),
 }
 
 const themeSlice = createSlice({
-    name, initialState,
+    name: 'theme',
+    initialState,
     reducers: {
-        toggleTheme(state, action: PayloadAction) {
+        toggleTheme: (state) => {
             state.dark = !state.dark
             setItem('dark', state.dark.toString())
         }

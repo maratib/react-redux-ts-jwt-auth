@@ -1,7 +1,7 @@
 import { history } from "@/helper";
-import { useAppDispatch, useAppSelector } from "@/hooks";
+import { useAppDispatch, useAppSelector } from "@/store";
 import { logout, toggleTheme } from "@/store";
-import React, { FC, useEffect } from "react";
+import React, { FC } from "react";
 
 type Props = {
   name?: string;

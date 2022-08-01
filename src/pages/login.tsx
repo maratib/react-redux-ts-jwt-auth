@@ -1,11 +1,11 @@
-import * as Yup from "yup";
-import React, { FC } from "react";
+
+import React, { FC, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useAppDispatch } from "@/hooks";
+import { useAppDispatch, useAppSelector } from "@/store";
 import toast from "react-hot-toast";
 import { history } from "@/helper";
-import { login } from "@/store";
+import { LoginForm } from "@/types";
+
 
 type Props = {
   name?: string;
@@ -14,20 +14,26 @@ type Props = {
 export const Login: FC<Props> = ({ name }) => {
   const dispatch = useAppDispatch();
 
-  // form validation rules
-  const validationSchema = Yup.object().shape({
-    username: Yup.string().required("Username is required"),
-    password: Yup.string().required("Password is required"),
-  });
+  const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
 
-  const formOptions = { resolver: yupResolver(validationSchema) };
+  useEffect(() => {
+    if (isAuthenticated) {
+      history.navigate('/')
+    }
+  }, [isAuthenticated]);
 
-  // get functions to build form with useForm() hook
-  const { register, handleSubmit, formState } = useForm(formOptions);
+
+  const { register, handleSubmit, formState } = useForm<LoginForm>();
   const { errors, isSubmitting } = formState;
 
-  const onSubmit = (fields: any) => {
-    dispatch(login());
+  const onSubmit = (loginForm: LoginForm): void => {
+
+    // auth.login(loginForm);
+
+
+    // dispatch(login());
+    console.log(loginForm);
+
 
     history.navigate("/");
     toast.success("Successfully toasted!");
@@ -35,11 +41,6 @@ export const Login: FC<Props> = ({ name }) => {
 
   return (
     <div className="col-md-6 offset-md-3 mt-5">
-      <div className="alert alert-info">
-        Username: test
-        <br />
-        Password: test
-      </div>
       <div className="card">
         <h4 className="card-header">Login</h4>
         <div className="card-body">
@@ -48,24 +49,25 @@ export const Login: FC<Props> = ({ name }) => {
               <label>Username</label>
               <input
                 type="text"
-                {...register("username")}
-                className={`form-control ${
-                  errors.username ? "is-invalid" : ""
-                }`}
+                {...register("username", { required: true, maxLength: 100 })}
+                className={`form-control ${errors.username ? "is-invalid" : ""
+                  } dark: text-black`}
               />
-              {/* <div className="invalid-feedback">{errors.username?.message}</div> */}
+              {errors?.username && <div>Username is required</div>}
+              {/* <div className="invalid-feedback">{errors}</div> */}
             </div>
             <div className="form-group">
               <label>Password</label>
               <input
                 type="password"
-                {...register("password")}
-                className={`form-control ${
-                  errors.password ? "is-invalid" : ""
-                }`}
+                {...register("password", { required: true, maxLength: 30 })}
+                className={`form-control ${errors.password ? "is-invalid" : ""
+                  } dark: text-black`}
               />
-              {/* <div className="invalid-feedback">{errors.password?.message}</div> */}
+              {/* <div className="invalid-feedback">{errors.username?.message}</div> */}
+              {errors?.password && <div>Password is required</div>}
             </div>
+
             <button disabled={isSubmitting} className="btn btn-primary">
               {isSubmitting && (
                 <span className="spinner-border spinner-border-sm mr-1"></span>

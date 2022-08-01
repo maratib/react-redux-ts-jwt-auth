@@ -9,7 +9,7 @@ import {
 import { Nav } from "@/components/Nav";
 
 import { history } from "@/helper";
-import { useAppSelector } from "@/hooks";
+import { useAppSelector } from "@/store";
 
 import { Home } from "@/pages/home";
 import { Login } from "@/pages/login";
