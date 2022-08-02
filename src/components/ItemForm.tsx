@@ -2,6 +2,7 @@ import apiService from '@/services';
 import { Item_Form } from '@/types';
 import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 
 type Props = {
     name?: string;
@@ -14,7 +15,7 @@ export const ItemForm: FC<Props> = ({ name }) => {
     const { register, handleSubmit, formState } = useForm<Item_Form>();
     const { errors, isSubmitting } = formState;
 
-    const onSubmit = async (itemForm: Item_Form): void => {
+    const onSubmit = async (itemForm: Item_Form) => {
 
         // console.log('Item-Form', itemForm);
         const data = new FormData();
@@ -27,17 +28,7 @@ export const ItemForm: FC<Props> = ({ name }) => {
         const res = await apiService.addPost(data);
         console.log(res?.data);
 
-
-
-        // console.log('File : ', itemForm.file[0]);
-
-
-
-
-
-
-
-        // toast.success("Successfully toasted!");
+        toast.success("Successfully added!");
     };
 
 
