@@ -1,21 +1,27 @@
-
-import { setItem } from "@/helper";
+import { IItem } from "@/types";
 import { axiosClient } from "./axiosClient";
 
-export default {
-    async auth(username: string, password: string): Promise<boolean> {
-        const res = await axiosClient.post(
-            "/auth/login",
-            JSON.stringify({ username, password })
-        );
+const getPosts = async (): Promise<any> => {
 
-        if (res.status == 201 && res.data.accessToken) {
+    return axiosClient.get(
+        "/post/all",
+    );
 
-            console.log("Token Received: ", res.data.accessToken);
+};
 
-            setItem("user", res.data);
-            return true;
-        }
-        return false;
-    },
-}
+const addPost = async (formData: FormData): Promise<any> => {
+
+    return axiosClient.post(
+        "/post",
+        formData
+    );
+
+};
+
+const apiService = {
+    addPost,
+    getPosts,
+};
+
+export default apiService;
+

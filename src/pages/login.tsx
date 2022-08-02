@@ -1,10 +1,11 @@
 
 import React, { FC, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useAppDispatch, useAppSelector } from "@/store";
+import { authenticateUser, useAppDispatch, useAppSelector } from "@/store";
 import toast from "react-hot-toast";
 import { history } from "@/helper";
 import { LoginForm } from "@/types";
+import authService from "@/services/auth.services";
 
 
 type Props = {
@@ -28,15 +29,9 @@ export const Login: FC<Props> = ({ name }) => {
 
   const onSubmit = (loginForm: LoginForm): void => {
 
-    // auth.login(loginForm);
+    dispatch(authenticateUser(loginForm));
 
-
-    // dispatch(login());
-    console.log(loginForm);
-
-
-    history.navigate("/");
-    toast.success("Successfully toasted!");
+    // toast.success("Successfully toasted!");
   };
 
   return (
@@ -68,7 +63,7 @@ export const Login: FC<Props> = ({ name }) => {
               {errors?.password && <div>Password is required</div>}
             </div>
 
-            <button disabled={isSubmitting} className="btn btn-primary">
+            <button disabled={isSubmitting} className="btn btn-primary bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
               {isSubmitting && (
                 <span className="spinner-border spinner-border-sm mr-1"></span>
               )}

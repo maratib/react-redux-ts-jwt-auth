@@ -1,25 +1,23 @@
-import { getItem, getLocalUser, setTokens } from "@/helper";
+import { getAccessToken, history, removeTokens, setTokens } from "@/helper";
 import authService from "@/services/auth.services";
 import { IAuth, LoginForm } from "@/types";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+// export const login = createAsyncThunk("auth/login",
+//   async (loginFrom: LoginForm) => {
+//     try {
 
+//     } catch (error) {
 
-export const login = createAsyncThunk("auth/login",
-  async (loginFrom: LoginForm) => {
-    try {
+//     }
+//   }
+// );
 
-    } catch (error) {
-
-    }
-  }
-);
 
 
 const name = "auth";
 const initialState: IAuth = {
-  user: getLocalUser(),
-  isAuthenticated: getLocalUser() ? true : false,
+  isAuthenticated: getAccessToken() ? true : false,
   loading: false,
   error: null,
 };
@@ -29,22 +27,22 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      state.user = null;
       state.isAuthenticated = false;
-      localStorage.removeItem("user");
+      removeTokens();
     },
     start: (state) => {
       console.log('Loading starts');
-
       state.loading = true
     },
     success: (state, action: PayloadAction<any>) => {
-      console.log('Loading success');
+      console.log('Loading success :', action.payload);
+      state.isAuthenticated = true
       state.loading = false
-      state.user = action.payload
+      setTokens(action.payload)
+      history.navigate('/')
     },
     error: (state, action: PayloadAction<any>) => {
-      console.log('Loading error');
+      console.log('Loading error:', action.payload);
 
       state.loading = false
       state.error = action.payload!
@@ -52,19 +50,20 @@ const authSlice = createSlice({
   },
 });
 
+
+
 export const authenticateUser = (loginForm: LoginForm) => async (dispatch: any) => {
-  try {
-    const authData = await authService.login(loginForm);
-    setTokens(authData.data);
-    dispatch(success(authData.data));
-    history.push('/v1');
-  } catch (err) {
-    dispatch(error(err));
-  }
+
+  dispatch(start())
+  authService.login(loginForm).then((res) => {
+    const data = res?.data;
+    dispatch(success(data))
+  }).catch((err) => {
+    dispatch(error(err.message));
+  });
 };
 
 
-
 export const { logout, start, success, error } = authSlice.actions;
-export const selectUser = (state: IAuth) => state.user.isAuthenticated;
+export const selectUser = (state: IAuth) => state.isAuthenticated;
 export default authSlice;

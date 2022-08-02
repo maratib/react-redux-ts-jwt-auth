@@ -1,17 +1,21 @@
-import { getLocalUser } from "@/helper";
-import { useAppSelector } from "@/store";
-import React from "react";
+import react, { FC } from 'react';
+import { history } from '@/helper';
+import { useAppSelector } from '@/store';
+import { Navigate } from 'react-router-dom';
 
-import { Navigate, Outlet } from "react-router-dom";
 
-const PrivateRoute = (props: any) => {
+const PrivateRoute: FC<any> = ({ children }) => {
+
     const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
 
-    const user = getLocalUser();
-    console.log("Logged in: ", isAuthenticated);
-    console.log("User in: ", user?.accessToken);
+    if (!isAuthenticated) {
+        return <Navigate to="/login" state={{ from: history.location }} />
+    }
 
-    return <>{isAuthenticated ? <Outlet {...props} /> : <Navigate to="/login" />}</>;
-};
+    // authorized so return child components
+    return children;
+}
 
 export default PrivateRoute;
+
+
